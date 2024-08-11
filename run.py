@@ -10,7 +10,6 @@ from src.utils import line_notify
 
 def main() -> None:
     logger.info("Start scraping")
-    load_dotenv()
 
     posts = scrape_posts()
     logger.info(f"Found {len(posts)} posts from {AUTHOR_NAME} on PTT")
@@ -28,6 +27,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    load_dotenv()
     logger.add("log.log", rotation="1 day", retention="7 days", level="INFO")
     start = time.time()
     main()
