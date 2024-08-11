@@ -1,16 +1,11 @@
 # type: ignore[reportOptionalMemberAccess]
 from __future__ import annotations
 
-from typing import Final
-
 import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
 from .schema import Post
-
-URL: Final[str] = "https://www.ptt.cc/bbs/home-sale/index4999.html"
-AUTHOR_NAME: Final[str] = "ceca"
 
 
 def fetch_content(url: str) -> str:
@@ -32,15 +27,15 @@ def get_post_content(url: str) -> str:
     return main_content.text
 
 
-def scrape_posts() -> list[Post]:
-    content = fetch_content(URL)
+def scrape_posts(url: str, *, author_name: str) -> list[Post]:
+    content = fetch_content(url)
     soup = BeautifulSoup(content, "lxml")
     posts: list[Post] = []
     rents = soup.find_all("div", class_="r-ent")
 
     for rent in rents:
         author = rent.find("div", class_="author").text.strip()
-        if author != AUTHOR_NAME:
+        if author != author_name:
             continue
 
         title = rent.find("div", class_="title").text.strip()
