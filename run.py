@@ -1,4 +1,5 @@
 import argparse
+import pathlib
 import time
 
 from dotenv import load_dotenv
@@ -32,14 +33,15 @@ args = parser.parse_args()
 
 def main() -> None:
     logger.info("Start scraping")
+    file_path = pathlib.Path(f"{args.author}.json")
 
     posts = scrape_posts(args.url, author_name=args.author)
     logger.info(f"Found {len(posts)} posts from {args.author} on PTT")
 
-    current_posts = load_posts()
+    current_posts = load_posts(file_path)
     logger.info(f"Found {len(current_posts)} posts in database")
 
-    saved_posts = save_posts(posts, current_posts)
+    saved_posts = save_posts(posts, current_posts, file_path)
     logger.info(f"Saved {len(saved_posts)} posts")
 
     for post in saved_posts:
