@@ -32,7 +32,7 @@ args = parser.parse_args()
 
 def main() -> None:
     logger.info("Start scraping")
-    file_path = pathlib.Path(f"{args.author}.json")
+    file_path = pathlib.Path(f"{args.author}_{args.url.split('/')[-2]}.json")
 
     posts = scrape_posts(args.url, author_name=args.author)
     logger.info(f"Found {len(posts)} posts from {args.author} on PTT")
