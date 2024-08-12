@@ -2,7 +2,6 @@ import argparse
 import pathlib
 import time
 
-from dotenv import load_dotenv
 from loguru import logger
 
 from src.database import load_posts, save_posts
@@ -51,7 +50,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    load_dotenv()
     logger.add("log.log", rotation="1 day", retention="7 days", level="INFO")
     start = time.time()
     main()
