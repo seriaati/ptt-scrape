@@ -1,26 +1,15 @@
-[tool.poetry]
-authors = ["seria <seria.ati@gmail.com>"]
-description = "PTT 爬蟲"
-license = "GPL-3.0-only"
+[project]
 name = "ptt-scrape"
-package-mode = false
-readme = "README.md"
 version = "0.1.0"
-
-[tool.poetry.dependencies]
-beautifulsoup4 = "^4.12.3"
-loguru = "^0.7.2"
-lxml = "^5.3.0"
-pydantic = "^2.8.2"
-python = "^3.11"
-requests = "^2.32.3"
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.8.0"
-
-[build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core"]
+description = "PTT 爬蟲"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "beautifulsoup4>=4.13.3",
+    "loguru>=0.7.3",
+    "lxml>=5.3.1",
+    "pydantic>=2.10.6",
+    "requests>=2.32.3",
+]
+authors = [{ name = "seriaati", email = "seria.ati@gmail.com" }]
+license = { file = "LICENSE" }
