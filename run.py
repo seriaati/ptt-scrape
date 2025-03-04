@@ -52,5 +52,9 @@ def main() -> None:
 if __name__ == "__main__":
     logger.add("log.log", rotation="1 day", retention="7 days", level="INFO")
     start = time.time()
-    main()
+    try:
+        main()
+    except Exception as e:
+        logger.exception(e)
+        discord_webhook(f"錯誤: {e}", url=args.webhook)
     logger.info(f"Execution time: {time.time() - start:.2f} seconds")
