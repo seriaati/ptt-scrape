@@ -6,14 +6,14 @@ from loguru import logger
 
 from src.database import load_posts, save_posts
 from src.scraper import scrape_posts
-from src.utils import line_notify
+from src.utils import discord_webhook
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--token",
+    "--webhook-url",
     type=str,
     required=True,
-    help="Line Notify token",
+    help="Discord Webhook URL",
 )
 parser.add_argument(
     "--url",
@@ -44,7 +44,7 @@ def main() -> None:
     logger.info(f"Saved {len(saved_posts)} posts")
 
     for post in saved_posts:
-        line_notify(post.notify_str, token=args.token)
+        discord_webhook(post.notify_str, url=args.webhook)
 
     logger.info("Scraping finished")
 
