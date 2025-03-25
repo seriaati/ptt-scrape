@@ -13,3 +13,15 @@ dependencies = [
 ]
 authors = [{ name = "seriaati", email = "seria.ati@gmail.com" }]
 license = { file = "LICENSE" }
+
+[tool.pyright]
+enableTypeIgnoreComments = false
+reportIncompatibleMethodOverride = false
+reportIncompatibleVariableOverride = false
+reportUnnecessaryComparison = true
+reportUnnecessaryContains = true
+reportUnnecessaryIsInstance = true
+reportUnnecessaryTypeIgnoreComment = true
+reportUnusedImport = true
+typeCheckingMode = "standard"
+ignore = ["src/scraper.py"]

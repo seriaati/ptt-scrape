@@ -1,4 +1,3 @@
-# type: ignore[reportOptionalMemberAccess]
 from __future__ import annotations
 
 import requests

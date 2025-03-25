@@ -161,3 +161,7 @@ cython_debug/
 test.py
 *.json
 .vscode/
+*.db
+*.sqlite3
+*.sqlite3-journal
+*.log

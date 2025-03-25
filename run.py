@@ -4,7 +4,7 @@ import time
 
 from loguru import logger
 
-from src.database import load_posts, save_posts
+from src.database import initialize_db, load_posts, save_posts
 from src.scraper import scrape_posts
 from src.utils import discord_webhook
 
@@ -28,11 +28,16 @@ parser.add_argument(
     help="Author to scrape",
 )
 args = parser.parse_args()
+sub_name = args.url.split("/")[-2]
+
+file_path = pathlib.Path(f"{args.author}_{sub_name}_posts.db")
+log_path = pathlib.Path(f"logs/{args.author}_{sub_name}.log")
+logger.add(log_path, rotation="1 day", retention="14 days", level="INFO")
 
 
 def main() -> None:
     logger.info("Start scraping")
-    file_path = pathlib.Path(f"{args.author}_{args.url.split('/')[-2]}.json")
+    initialize_db(file_path)
 
     posts = scrape_posts(args.url, author_name=args.author)
     logger.info(f"Found {len(posts)} posts from {args.author} on PTT")
@@ -40,7 +45,7 @@ def main() -> None:
     current_posts = load_posts(file_path)
     logger.info(f"Found {len(current_posts)} posts in database")
 
-    saved_posts = save_posts(posts, current_posts, file_path)
+    saved_posts = save_posts(posts, file_path)
     logger.info(f"Saved {len(saved_posts)} posts")
 
     for post in saved_posts:
@@ -50,7 +55,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    logger.add("log.log", rotation="1 day", retention="7 days", level="INFO")
     start = time.time()
     try:
         main()
