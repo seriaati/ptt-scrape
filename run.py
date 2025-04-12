@@ -49,7 +49,7 @@ def main() -> None:
     logger.info(f"Saved {len(saved_posts)} posts")
 
     for post in saved_posts:
-        discord_webhook(post.notify_str, url=args.webhook)
+        discord_webhook(post.notify_str, url=args.webhook_url)
 
     logger.info("Scraping finished")
 
@@ -60,5 +60,5 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         logger.exception(e)
-        discord_webhook(f"錯誤: {e}", url=args.webhook)
+        discord_webhook(f"錯誤: {e}", url=args.webhook_url)
     logger.info(f"Execution time: {time.time() - start:.2f} seconds")
