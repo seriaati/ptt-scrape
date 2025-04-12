@@ -1,4 +1,5 @@
 from __future__ import annotations
+import textwrap
 
 import requests
 from bs4 import BeautifulSoup
@@ -41,7 +42,12 @@ def scrape_posts(url: str, *, author_name: str) -> list[Post]:
         date = rent.find("div", class_="date").text.strip()
         url = rent.find("div", class_="title").a["href"]
 
-        post = Post(url=url, title=title, date=date, content=get_post_content(url))
+        post = Post(
+            url=url,
+            title=title,
+            date=date,
+            content=textwrap.shorten(get_post_content(url), 1000),
+        )
         posts.append(post)
 
     return posts
