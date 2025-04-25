@@ -9,4 +9,4 @@ class Post(BaseModel):
 
     @property
     def notify_str(self) -> str:
-        return f"\nhttps://www.ptt.cc{self.url}\n標題: {self.title}\n發布於: {self.date}\n\n{self.content}"
+        return f"\n# {self.title}\n-# 發布於 {self.date}\n<https://www.ptt.cc{self.url}>\n{self.content}"

@@ -27,17 +27,13 @@ def get_post_content(url: str) -> str:
     return main_content.text
 
 
-def scrape_posts(url: str, *, author_name: str) -> list[Post]:
+def scrape_posts(url: str) -> list[Post]:
     content = fetch_content(url)
     soup = BeautifulSoup(content, "lxml")
     posts: list[Post] = []
     rents = soup.find_all("div", class_="r-ent")
 
     for rent in rents:
-        author = rent.find("div", class_="author").text.strip()
-        if author != author_name:
-            continue
-
         title = rent.find("div", class_="title").text.strip()
         date = rent.find("div", class_="date").text.strip()
         url = rent.find("div", class_="title").a["href"]

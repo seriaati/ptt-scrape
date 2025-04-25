@@ -16,10 +16,10 @@ parser.add_argument(
     help="Discord Webhook URL",
 )
 parser.add_argument(
-    "--url",
+    "--board-name",
     type=str,
     required=True,
-    help="PTT board url",
+    help="PTT board name",
 )
 parser.add_argument(
     "--author",
@@ -27,11 +27,12 @@ parser.add_argument(
     required=True,
     help="Author to scrape",
 )
-args = parser.parse_args()
-sub_name = args.url.split("/")[-2]
 
-file_path = pathlib.Path(f"{args.author}_{sub_name}_posts.db")
-log_path = pathlib.Path(f"logs/{args.author}_{sub_name}.log")
+args = parser.parse_args()
+webhook_url, board_name, author = (args.webhook_url, args.board_name, args.author)
+
+file_path = pathlib.Path(f"databases/{author}_{board_name}_posts.db")
+log_path = pathlib.Path(f"logs/{author}_{board_name}.log")
 logger.add(log_path, rotation="1 day", retention="14 days", level="INFO")
 
 
@@ -39,8 +40,10 @@ def main() -> None:
     logger.info("Start scraping")
     initialize_db(file_path)
 
-    posts = scrape_posts(args.url, author_name=args.author)
-    logger.info(f"Found {len(posts)} posts from {args.author} on PTT")
+    posts = scrape_posts(
+        f"https://www.ptt.cc/bbs/{board_name}/search?q=author%3A{author}"
+    )
+    logger.info(f"Found {len(posts)} posts from {author} on PTT")
 
     current_posts = load_posts(file_path)
     logger.info(f"Found {len(current_posts)} posts in database")
@@ -49,7 +52,7 @@ def main() -> None:
     logger.info(f"Saved {len(saved_posts)} posts")
 
     for post in saved_posts:
-        discord_webhook(post.notify_str, url=args.webhook_url)
+        discord_webhook(post.notify_str, url=webhook_url)
 
     logger.info("Scraping finished")
 
