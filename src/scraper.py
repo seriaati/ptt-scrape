@@ -15,8 +15,6 @@ def fetch_content(url: str) -> str:
 
 def get_post_content(url: str) -> str:
     content = fetch_content(f"https://www.ptt.cc{url}")
-    with open("temp.html", "w", encoding="utf-8") as f:
-        f.write(content)
     soup = BeautifulSoup(content, "lxml")
     main_content = soup.find("div", id="main-content")
     for meta in main_content.find_all("div", class_="article-metaline"):
@@ -31,6 +29,8 @@ def get_post_content(url: str) -> str:
 
 def scrape_posts(url: str) -> list[Post]:
     content = fetch_content(url)
+    with open("temp.html", "w", encoding="utf-8") as f:
+        f.write(content)
     soup = BeautifulSoup(content, "lxml")
     posts: list[Post] = []
     rents = soup.find_all("div", class_="r-ent")
