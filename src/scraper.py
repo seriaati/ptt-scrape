@@ -10,7 +10,7 @@ from .schema import Post
 
 def fetch_content(url: str) -> str:
     logger.info(f"[GET] {url}")
-    return requests.get(url, headers={"User-Agent", "Mozilla/5.0"}).text
+    return requests.get(url, headers={"User-Agent": "Mozilla/5.0"}).text
 
 
 def get_post_content(url: str) -> str:
