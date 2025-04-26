@@ -1,15 +1,26 @@
 from __future__ import annotations
+import os
 import textwrap
 
 import requests
 from bs4 import BeautifulSoup
 from loguru import logger
+from dotenv import load_dotenv
 
 from .schema import Post
+
+load_dotenv()
+PROXY = os.getenv("PROXY")
 
 
 def fetch_content(url: str) -> str:
     logger.info(f"[GET] {url}")
+    if PROXY:
+        proxies = {"http": PROXY, "https": PROXY}
+        return requests.get(
+            url, headers={"User-Agent": "Mozilla/5.0"}, proxies=proxies
+        ).text
+
     return requests.get(url, headers={"User-Agent": "Mozilla/5.0"}).text
 
 
@@ -29,8 +40,6 @@ def get_post_content(url: str) -> str:
 
 def scrape_posts(url: str) -> list[Post]:
     content = fetch_content(url)
-    with open("temp.html", "w", encoding="utf-8") as f:
-        f.write(content)
     soup = BeautifulSoup(content, "lxml")
     posts: list[Post] = []
     rents = soup.find_all("div", class_="r-ent")
