@@ -6,22 +6,32 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 from dotenv import load_dotenv
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+)
+from urllib3.exceptions import ProxyError
+from http.client import RemoteDisconnected
+from requests.exceptions import ConnectionError
 
 from .schema import Post
 
 load_dotenv()
 PROXY = os.getenv("PROXY")
 
+proxies = {"http": PROXY, "https": PROXY}
 
+
+@retry(
+    retry=retry_if_exception_type((ProxyError, RemoteDisconnected, ConnectionError)),
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=1, max=60),
+)
 def fetch_content(url: str) -> str:
     logger.info(f"[GET] {url}")
-    if PROXY:
-        proxies = {"http": PROXY, "https": PROXY}
-        return requests.get(
-            url, headers={"User-Agent": "Mozilla/5.0"}, proxies=proxies
-        ).text
-
-    return requests.get(url, headers={"User-Agent": "Mozilla/5.0"}).text
+    return requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, proxies=proxies).text
 
 
 def get_post_content(url: str) -> str:

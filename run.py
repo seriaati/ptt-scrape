@@ -3,6 +3,9 @@ import pathlib
 import time
 
 from loguru import logger
+from urllib3.exceptions import ProxyError
+from requests.exceptions import ConnectionError
+from http.client import RemoteDisconnected
 
 from src.database import initialize_db, load_posts, save_posts
 from src.scraper import scrape_posts
@@ -12,8 +15,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "--webhook-url",
     type=str,
-    required=True,
+    required=False,
     help="Discord Webhook URL",
+    default=None,
 )
 parser.add_argument(
     "--board-name",
@@ -29,7 +33,11 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-webhook_url, board_name, author = (args.webhook_url, args.board_name, args.author)
+webhook_url: str | None = args.webhook_url
+if webhook_url is None:
+    logger.info("No webhook URL provided, will skip Discord notification")
+
+board_name, author = (args.board_name, args.author)
 
 file_path = pathlib.Path(f"databases/{author}_{board_name}_posts.db")
 log_path = pathlib.Path(f"logs/{author}_{board_name}.log")
@@ -51,8 +59,9 @@ def main() -> None:
     saved_posts = save_posts(posts, file_path)
     logger.info(f"Saved {len(saved_posts)} posts")
 
-    for post in saved_posts:
-        discord_webhook(post.notify_str, url=webhook_url)
+    if webhook_url is not None:
+        for post in saved_posts:
+            discord_webhook(post.notify_str, url=webhook_url)
 
     logger.info("Scraping finished")
 
@@ -61,7 +70,9 @@ if __name__ == "__main__":
     start = time.time()
     try:
         main()
+    except (ProxyError, ConnectionError, RemoteDisconnected):
+        pass
     except Exception as e:
         logger.exception(e)
-        discord_webhook(f"錯誤: {e}", url=args.webhook_url)
+        discord_webhook(f"錯誤: {type(e)} {e}", url=args.webhook_url)
     logger.info(f"Execution time: {time.time() - start:.2f} seconds")
