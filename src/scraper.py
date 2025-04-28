@@ -28,6 +28,7 @@ proxies = {"http": PROXY, "https": PROXY}
     retry=retry_if_exception_type((ProxyError, RemoteDisconnected, ConnectionError)),
     stop=stop_after_attempt(5),
     wait=wait_exponential(multiplier=1, min=1, max=60),
+    reraise=True,
 )
 def fetch_content(url: str) -> str:
     logger.info(f"[GET] {url}")
