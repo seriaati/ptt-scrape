@@ -32,7 +32,9 @@ proxies = {"http": PROXY, "https": PROXY}
 )
 def fetch_content(url: str) -> str:
     logger.info(f"[GET] {url}")
-    return requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, proxies=proxies).text
+    return requests.get(
+        url, headers={"User-Agent": "Mozilla/5.0"}, proxies=proxies
+    ).text
 
 
 def get_post_content(url: str) -> str:
@@ -60,12 +62,7 @@ def scrape_posts(url: str) -> list[Post]:
         date = rent.find("div", class_="date").text.strip()
         url = rent.find("div", class_="title").a["href"]
 
-        post = Post(
-            url=url,
-            title=title,
-            date=date,
-            content=textwrap.shorten(get_post_content(url), 1000),
-        )
+        post = Post(url=url, title=title, date=date, content="")
         posts.append(post)
 
     return posts

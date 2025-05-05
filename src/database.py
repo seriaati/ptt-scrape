@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import pathlib
 import sqlite3
+import textwrap
 
+from .scraper import get_post_content
 from .schema import Post
 
 
@@ -52,6 +54,7 @@ def save_posts(posts_to_save: list[Post], db_path: pathlib.Path) -> list[Post]:
         cursor = conn.cursor()
         for post in posts_to_save:
             if get_post(post.url, db_path) is None:
+                post.content = textwrap.shorten(get_post_content(post.url), 1000)
                 cursor.execute(
                     "INSERT INTO posts (url, title, date, content) VALUES (?, ?, ?, ?)",
                     (post.url, post.title, post.date, post.content),
