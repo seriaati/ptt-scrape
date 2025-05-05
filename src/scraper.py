@@ -41,6 +41,9 @@ def get_post_content(url: str) -> str:
     content = fetch_content(f"https://www.ptt.cc{url}")
     soup = BeautifulSoup(content, "lxml")
     main_content = soup.find("div", id="main-content")
+    if main_content is None:
+        return "(未能取得文章內容)"
+
     for meta in main_content.find_all("div", class_="article-metaline"):
         if meta is None:
             continue
